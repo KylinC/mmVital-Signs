@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>CPU_and_MEM_Monitor</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/socket.io/1.5.1/socket.io.min.js"></script>
+    <!-- ECharts 3 引入 -->
+    <script src="static/js/echarts.min.js"></script>
+</head>
+
+<body>
+    <!--为ECharts准备一个具备大小（宽高）的Dom-->
+    <div id="CPU1" style="height:500px;border:1px solid #ccc;padding:10px;"></div>
+    <div id="CPU2" style="height:500px;border:1px solid #ccc;padding:10px;"></div>
+    <script type="text/javascript">
+
+    //--- 折柱 ---
+    // 3个全局变量：time、cpu1、cpu2
+    var time = ["","","","","","","","","",""],
+        cpu1 = [0,0,0,0,0,0,0,0,0,0],
+        cpu2 = [0,0,0,0,0,0,0,0,0,0]
+
+    //第一张echarts图初始化
+    var CPU1 = echarts.init(document.getElementById('CPU1'));
+    CPU1.setOption({
+        title: {
+            text: 'CPU1'
+        },
+        tooltip: {},
+        legend: {
+            data:['cpu1']
+        },
+        xAxis: {
+            data: []
+        },
+        yAxis: {},
+        series: [{
+            name: 'cpu1',
+            type: 'line',
+            data: []
+        }]
+    });
+        
+
+    //准备好的 callback 函数
+    var update_CPU1 = function (res) { //res是json格式的response对象
+        
+        // 隐藏加载动画
+        CPU1.hideLoading();
+        
+        // 准备数据
+        time.push(res.data[0]);
+        cpu1.push(parseFloat(res.data[1]));
+        if (time.length >= 10){
+            time.shift();
+            cpu1.shift();
+        }
+        
+        // 填入数据
+        CPU1.setOption({
+            xAxis: {
+                data: time
+            },
+            series: [{
+                name: 'cpu1', // 根据名字对应到相应的系列
+                data: cpu1
+            }]
+        });
+        
+    };
+    
+    //第二张echarts图初始化
+    var CPU2 = echarts.init(document.getElementById('CPU2'));
+    CPU2.setOption({
+        title: {
+            text: 'CPU2'
+        },
+        tooltip: {},
+        legend: {
+            data:['cpu2']
+        },
+        toolbox: {
+        show : true,
+        feature : {
+            mark : {show: true},
+            dataView : {show: true, readOnly: false},
+            magicType : {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+            restore : {show: true},
+            saveAsImage : {show: true}
+        }
+    },
+        calculable : true,
+        xAxis: {
+            data: []
+        },
+        yAxis: {},
+        series: [{
+            name: 'cpu2',
+            type: 'line',
+            smooth:true,
+            itemStyle: {normal: {areaStyle: {type: 'default'}}},
+            data: []
+        }]
+    });
+        
+
+    //准备好的 callback 函数
+    var update_CPU2 = function (res) { //res是json格式的response对象
+        
+        // 隐藏加载动画
+        CPU2.hideLoading();
+        
+        // 准备数据
+        time.push(res.data[0]);
+        cpu2.push(parseFloat(res.data[2]));
+        if (time.length >= 10){
+            time.shift();
+            cpu2.shift();
+        }
+        
+        // 填入数据
+        CPU2.setOption({
+            xAxis: {
+                data: time
+            },
+            series: [{
+                name: 'cpu2', // 根据名字对应到相应的系列
+                data: cpu2
+            }]
+        });
+        
+    };
+
+    // 首次显示加载动画
+    CPU1.showLoading();
+    CPU2.showLoading();
+    
+    // 建立socket连接，等待服务器“推送”数据，用回调函数更新图表
+    $(document).ready(function() {
+        namespace = '/test';
+        var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
+        
+        socket.on('server_response', function(res) {
+            console.log(res);
+            update_CPU1(res);
+            update_CPU2(res);
+            // console.log(res);
+        });
+
+    });
+    
+    </script>
+</body>
+</html>
+
