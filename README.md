@@ -13,7 +13,7 @@ The [mmVital-Signs project](https://github.com/KylinC/mmVital-Signs) aims at vit
 
 ### Experiment Environment
 
->  Detection range covers the hemicircle area at 0m ~ 8.6m, refers to Part.3
+> Detection range covers the hemicircle area at 0m ~ 8.6m, refers to Part.3
 
 ![](http://kylinhub.oss-cn-shanghai.aliyuncs.com/2021-01-17-IMG_8789.jpg)
 
@@ -23,13 +23,15 @@ The [mmVital-Signs project](https://github.com/KylinC/mmVital-Signs) aims at vit
 
 ![捕获](http://kylinhub.oss-cn-shanghai.aliyuncs.com/2021-01-17-020515.png)
 
+![image](https://github.com/KylinC/mmVital-Signs/blob/main/docs/VS-gif-1.gif)   
+
 
 
 ### Theory
 
 - **Biology**
 
-For normal adults, body movement parameters are:
+Typical body surface displacement parameters due to breathing and hear-beat are：
 
 <img src="http://kylinhub.oss-cn-shanghai.aliyuncs.com/2021-01-17-%E6%88%AA%E5%B1%8F2021-01-17%20%E4%B8%8A%E5%8D%8810.06.14.png" height="80" />
 
@@ -43,8 +45,17 @@ Transmitted FMCW signal is given by $$s(t)=e^{j\cdot(2\pi f_ct+\pi \frac{B}{T}t^
 
 - **Chirp Configuration for Demo**
 
+>  100 ADC Samples per chirp. Chirp duration is 50 ms based on the IF sampling rate of 2 MHz
+
 Vital signs waveform is sampled along the “slow time axis” hence the vital signs sampling rate is equal to the Frame-rate of system 
 
 <img src="http://kylinhub.oss-cn-shanghai.aliyuncs.com/2021-01-17-%E6%88%AA%E5%B1%8F2021-01-17%20%E4%B8%8A%E5%8D%8810.35.52.jpg" height="300" />
 
-> Seek more detail in [blog](http://kylinchen.top). 
+### Requirements
+
+| **Item**     | **Details**                                                  |
+| ------------ | ------------------------------------------------------------ |
+| Device       | [IWR6843ISK Antenna Module](http://www.ti.com/tool/IWR6843ISK) **OR** [IWR6843ISK_ODS Antenna Module](http://www.ti.com/tool/IWR6843ISK-ODS) **OR** [IWR6843AOPEVM](http://www.ti.com/tool/IWR6843AOPEVM). |
+| Power Supply | 5V, 3A with 2.1-mm barrel jack (center positive). The power supply can be wall adapter style or a battery pack with a USB to barrel jack cable. |
+| Python 3.6   | All package included in requirements.txt                     |
+
