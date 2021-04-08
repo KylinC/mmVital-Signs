@@ -23,7 +23,7 @@ The [mmVital-Signs project](https://github.com/KylinC/mmVital-Signs) aims at vit
 
 ![捕获](http://kylinhub.oss-cn-shanghai.aliyuncs.com/2021-01-17-020515.png)
 
-![image](https://github.com/KylinC/mmVital-Signs/blob/main/docs/VS-gif-1.gif)   
+![image](https://github.com/KylinC/mmVital-Signs/blob/main/docs/VS-2.gif)   
 
 
 
