@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<projectSpec>
+    <project
+        name="vital_signs_68xx_mss"
+        deviceFamily="ARM"
+        isTargetManual="false"
+        device="Cortex R.IWR6843"
+        endianness="little"
+        cgtVersion="16.9.6.LTS"
+        connection="common/targetdb/connections/TIXDS110_Connection.xml"
+        toolChain="TI"
+        linkerCommandFile="mss_mmw_linker.cmd"
+        preannouncebuildStep="Deleting old Metaimage bin file"
+        preBuildStep="rm -f &quot;${PROJECT_ROOT}/Debug/vital_signs_demo_68xx.bin&quot;"
+        postannouncebuildStep="Preparing BIN format image"
+        postBuildStep="${COM_TI_MMWAVE_SDK_INSTALL_DIR}/packages/scripts/ImageCreator/out2rprc/out2rprc.exe vital_signs_68xx_mss.xer4f vital_signs_68xx_mss.tmp;
+        ${COM_TI_MMWAVE_SDK_INSTALL_DIR}/packages/scripts/ImageCreator/multicore_image_generator/MulticoreImageGen.exe LE 37 0x00000006 vital_signs_demo_68xx.bin 0x35510000 vital_signs_68xx_mss.tmp 0xb5510000 ${COM_TI_MMWAVE_SDK_INSTALL_DIR}/firmware/radarss/xwr6xxx_radarss_rprc.bin 0xd5510000 ${WORKSPACE_LOC}/vital_signs_68xx_dss/Debug/vital_signs_68xx_dss.bin;
+        ${COM_TI_MMWAVE_SDK_INSTALL_DIR}/packages/scripts/ImageCreator/crc_multicore_image/crc_multicore_image.exe vital_signs_demo_68xx.bin vital_signs_demo_68xx.tmp;
+        ${COM_TI_MMWAVE_SDK_INSTALL_DIR}/packages/scripts/ImageCreator/append_bin_crc/gen_bincrc32.exe vital_signs_demo_68xx.bin;"
+        description="Vital Signs demo 68xx - mss"
+        launchWizard="false"
+        configurations="Debug, Release"
+        compilerBuildOptions="
+        -mv7R4 --code_state=16 --float_support=VFPv3D16 -me -O3 -eo=.oer4f
+        -I&quot;${PROJECT_ROOT}&quot;
+        -I&quot;${PROJECT_ROOT}/mss&quot;
+        -I&quot;${PROJECT_ROOT}/common&quot;
+        -I${CG_TOOL_ROOT}/include
+        -I${COM_TI_MMWAVE_SDK_INSTALL_DIR}/packages
+        -DSOC_XWR68XX
+        -DSUBSYS_MSS
+        -DDOWNLOAD_FROM_CCS
+        -DMMWAVE_L3RAM_NUM_BANK=6
+        -DMMWAVE_SHMEM_TCMA_NUM_BANK=0
+        -DMMWAVE_SHMEM_TCMB_NUM_BANK=0
+        -DMMWAVE_SHMEM_BANK_SIZE=0x20000
+        -DDebugP_ASSERT_ENABLED
+        -D_LITTLE_ENDIAN
+        -g --diag_warning=225 --diag_wrap=off --display_error_number --gen_func_subsections=on --enum_type=int --abi=eabi"
+        linkerBuildOptions="
+        -mvital_signs_68xx_mss.map -ovital_signs_68xx_mss.xer4f
+        -I${COM_TI_MMWAVE_SDK_LIBRARY_PATH}
+        -I${CG_TOOL_ROOT}/lib
+        -I${COM_TI_MMWAVE_SDK_INSTALL_DIR}/packages/ti/control/mmwave/lib
+        -I${COM_TI_MMWAVE_SDK_INSTALL_DIR}/packages/ti/control/mmwavelink/lib
+        -I${COM_TI_MMWAVE_SDK_INSTALL_DIR}/packages/ti/drivers/adcbuf/lib
+        -I${COM_TI_MMWAVE_SDK_INSTALL_DIR}/packages/ti/drivers/crc/lib
+        -I${COM_TI_MMWAVE_SDK_INSTALL_DIR}/packages/ti/drivers/dma/lib
+        -I${COM_TI_MMWAVE_SDK_INSTALL_DIR}/packages/ti/drivers/edma/lib
+        -I${COM_TI_MMWAVE_SDK_INSTALL_DIR}/packages/ti/drivers/esm/lib
+        -I${COM_TI_MMWAVE_SDK_INSTALL_DIR}/packages/ti/drivers/gpio/lib
+        -I${COM_TI_MMWAVE_SDK_INSTALL_DIR}/packages/ti/drivers/mailbox/lib
+        -I${COM_TI_MMWAVE_SDK_INSTALL_DIR}/packages/ti/drivers/osal/lib
+        -I${COM_TI_MMWAVE_SDK_INSTALL_DIR}/packages/ti/drivers/pinmux/lib
+        -I${COM_TI_MMWAVE_SDK_INSTALL_DIR}/packages/ti/drivers/soc/lib
+        -I${COM_TI_MMWAVE_SDK_INSTALL_DIR}/packages/ti/drivers/uart/lib
+        -I${COM_TI_MMWAVE_SDK_INSTALL_DIR}/packages/ti/utils/mathutils/lib
+	    -I${COM_TI_MMWAVE_SDK_INSTALL_DIR}/packages/ti/utils/cli/lib
+        -I${COM_TI_MMWAVE_SDK_INSTALL_DIR}/packages/ti/drivers/qspi/lib
+        -I${COM_TI_MMWAVE_SDK_INSTALL_DIR}/packages/ti/drivers/qspiflash/lib
+        -llibosal_xwr68xx.aer4f
+        -llibesm_xwr68xx.aer4f
+        -llibgpio_xwr68xx.aer4f
+        -llibsoc_xwr68xx.aer4f
+        -llibpinmux_xwr68xx.aer4f
+        -llibcrc_xwr68xx.aer4f
+        -llibuart_xwr68xx.aer4f
+        -llibmailbox_xwr68xx.aer4f
+        -llibmmwavelink_xwr68xx.aer4f
+        -llibmmwave_xwr68xx.aer4f
+        -llibadcbuf_xwr68xx.aer4f
+        -llibdma_xwr68xx.aer4f
+        -llibedma_xwr68xx.aer4f
+        -llibmathutils.aer4f
+        -llibcli_xwr68xx.aer4f
+        -llibqspi_xwr68xx.aer4f
+        -llibqspiflash_xwr68xx.aer4f 
+        --define=MMWAVE_L3RAM_NUM_BANK=6
+        --define=MMWAVE_SHMEM_TCMA_NUM_BANK=0
+        --define=MMWAVE_SHMEM_TCMB_NUM_BANK=0
+        --define=MMWAVE_SHMEM_BANK_SIZE=0x20000
+        --reread_libs --diag_warning=225 --diag_error=10015 --diag_wrap=off --display_error_number --warn_sections --xml_link_info=vital_signs_68xx_mss_linkInfo.xml --rom_model --unused_section_elimination=on --disable_auto_rts -lrtsv7R4_T_le_v3D16_eabi.lib">
+
+        <!-- Project properties -->
+        <property name="type" value="rtsc"/>
+        <property name="products" value="com.ti.rtsc.SYSBIOS:6.73.01.01;com.ti.MMWAVE_SDK:03.05.00.04;"/>
+        <property name="xdcToolsVersion" value="3.50.08.24_core"/>
+        <property name="target" value="ti.targets.arm.elf.R4Ft"/>
+        <property name="platform" value="ti.platforms.cortexR:IWR68XX:false:200"/>
+        <property name="endianness" value="little"/>
+        <property name="output_format" value="elf"/>
+        <property name="buildProfile" value="release"/>
+        <property name="configuroOptions" value="--compileOptions &quot;--enum_type=int &quot; "/>
+
+        <!-- Project files -->
+        <file path="mss/cli.c" targetDirectory="mss" openOnCreation="false" excludeFromBuild="false" action="copy"/>
+        <file path="mss/mss_main.c" targetDirectory="mss" openOnCreation="false" excludeFromBuild="false" action="copy"/>
+        <file path="mss/mss_mmw.cfg" targetDirectory="mss" openOnCreation="false" excludeFromBuild="false" action="copy"/>
+        <file path="mss/mss_mmw.h" targetDirectory="mss" openOnCreation="false" excludeFromBuild="false" action="copy"/>
+        <file path="common/mmw_config.h" targetDirectory="common" openOnCreation="false" excludeFromBuild="false" action="copy" />
+        <file path="common/mmw_messages.h" targetDirectory="common" openOnCreation="false" excludeFromBuild="false" action="copy" />
+        <file path="common/mmw_output.h" targetDirectory="common" openOnCreation="false" excludeFromBuild="false" action="copy" />
+        <file path="mss/mss_mmw_linker.cmd" targetDirectory="mss" openOnCreation="false" excludeFromBuild="false" action="copy"/>
+        <file path="COM_TI_MMWAVE_SDK_INSTALL_DIR/packages/ti/demo/utils/mmwdemo_flash.c" openOnCreation="false" excludeFromBuild="false" action="copy"/>
+        <file path="COM_TI_MMWAVE_SDK_INSTALL_DIR/packages/ti/platform/xwr68xx/r4f_linker.cmd" openOnCreation="false" excludeFromBuild="false"/>
+
+    </project>
+</projectSpec>
