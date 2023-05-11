@@ -3,10 +3,10 @@
 > Millimeter-wave vital-signs detection 
 
 <p align="left">
-    <a href="https://github.com/KylinC/mmVital-Signs"><img src="https://img.shields.io/badge/Python-3.6-blue" alt="GitHub version"></a>
+    <a href="https://github.com/KylinC/mmVital-Signs"><img src="https://img.shields.io/badge/Python-3.10-blue" alt="GitHub version"></a>
     <a href="https://github.com/KylinC/mmVital-Signs"><img src="https://img.shields.io/badge/C%2FC%2B%2B-98-yellow" alt="GitHub version"></a>
-    <a href="https://github.com/KylinC/mmVital-Signs"><img src="https://img.shields.io/badge/TI%20mmWave%20SDK-3.5.x.x-orange" alt="GitHub version"></a>
-    <a href="https://github.com/KylinC/mmVital-Signs"><img src="https://img.shields.io/badge/CCS-8.3.1-lightgrey" alt="GitHub version"></a>
+    <a href="https://github.com/KylinC/mmVital-Signs"><img src="https://img.shields.io/badge/TI%20mmWave%20SDK-3.6.x.x-orange" alt="GitHub version"></a>
+    <a href="https://github.com/KylinC/mmVital-Signs"><img src="https://img.shields.io/badge/CCS-12.3.0-lightgrey" alt="GitHub version"></a>
   </p>
 
 The [mmVital-Signs project](https://github.com/KylinC/mmVital-Signs) aims at vital signs detection and provide standard python API from [Texas Instrument](https://www.ti.com.cn/) (TI) mmWave hardware, such as xWR14xx, xWR16xx and xWR68xx.
@@ -57,5 +57,5 @@ Vital signs waveform is sampled along the “slow time axis” hence the vital s
 | ------------ | ------------------------------------------------------------ |
 | Device       | [IWR6843ISK Antenna Module](http://www.ti.com/tool/IWR6843ISK) **OR** [IWR6843ISK_ODS Antenna Module](http://www.ti.com/tool/IWR6843ISK-ODS) **OR** [IWR6843AOPEVM](http://www.ti.com/tool/IWR6843AOPEVM). |
 | Power Supply | 5V, 3A with 2.1-mm barrel jack (center positive). The power supply can be wall adapter style or a battery pack with a USB to barrel jack cable. |
-| Python 3.6   | All package included in requirements.txt                     |
+| Python 3.10  | All package included in requirements.txt                     |
 
