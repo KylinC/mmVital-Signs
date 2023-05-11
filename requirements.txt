@@ -1,0 +1,5 @@
+numpy==1.23.5
+pandas==1.5.3
+pyqtgraph==0.13.3
+pyserial==3.5
+scikit_learn==1.2.1

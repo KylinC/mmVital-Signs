@@ -4,12 +4,13 @@ import time
 import numpy as np
 import struct
 import pyqtgraph as pg
-from pyqtgraph.Qt import QtGui
+from pyqtgraph.Qt import QtWidgets
 from sklearn.cluster import dbscan
 import pandas
 from mmVS.com import serialConfig, parseConfigFile
+import sys
 
-configFileName = 'C:/Users/kylin/Desktop/code/mmVital-Signs/profiles/xwr6843_profile_VitalSigns_20fps_Back.cfg'
+configFileName = 'profiles/xwr6843_profile_VitalSigns_20fps_Front.cfg'
 
 CLIport = {}
 Dataport = {}
@@ -43,7 +44,11 @@ def readAndParseData68xx(Dataport, configParameters):
     readBuffer = Dataport.read(Dataport.in_waiting)
     byteVec = np.frombuffer(readBuffer, dtype='uint8')
     byteCount = len(byteVec)
-
+    #if len(readBuffer):
+    #    print(readBuffer)
+    #    print(byteVec)
+    #    print(byteCount)
+    #    print("💩\n")
     if (byteBufferLength + byteCount) < maxBufferSize:
         byteBuffer[byteBufferLength:(byteBufferLength + byteCount)] = byteVec[0:byteCount]
         byteBufferLength = byteBufferLength + byteCount
@@ -71,7 +76,6 @@ def readAndParseData68xx(Dataport, configParameters):
             totalPacketLen = int.from_bytes(byteBuffer[12:12 + 4], byteorder='little')
             if (byteBufferLength >= totalPacketLen) and (byteBufferLength != 0):
                 magicOK = 1
-
     if magicOK:
         idX = 0
         magicNumber = byteBuffer[idX:idX + 8]
@@ -155,9 +159,9 @@ def readAndParseData68xx(Dataport, configParameters):
                     numRangeBinProcessed = vitalsign["rangeBinEndIndex"]-vitalsign["rangeBinStartIndex"]+1
                 vitalsign["RangeProfile"] = []
                 for i in range(numRangeBinProcessed):
-                    RPrealpart = int.from_bytes(byteBuffer[idX:idX + 2])
+                    RPrealpart = int.from_bytes(byteBuffer[idX:idX + 2], byteorder='big')
                     idX += 2
-                    RPimagelpart = int.from_bytes(byteBuffer[idX:idX + 2])
+                    RPimagelpart = int.from_bytes(byteBuffer[idX:idX + 2], byteorder='big')
                     idX += 2
                     vitalsign["RangeProfile"].append(pow(RPrealpart*RPrealpart+RPimagelpart*RPimagelpart,0.5))
         if 0 < idX < byteBufferLength:
@@ -183,6 +187,7 @@ def update():
     global Heartenerge
     dataOk, frameNumber, vitalsign = readAndParseData68xx(Dataport, configParameters)
     if dataOk:
+        #print(f"Got {frameNumber} Data!\n")
         Breathsignal.append(vitalsign["outputFilterBreathOut"])
         Heartbeatsignal.append(vitalsign["outputFilterHeartOut"])
         Chestdisplacement.append(float(vitalsign["unwrapPhasePeak_mm"]))
@@ -207,9 +212,9 @@ def update():
         s4.setData(np.array((list(np.arange(0, numRangeBinProcessed*configParameters["rangeResolutionMeters"], configParameters["rangeResolutionMeters"])), Rangeprofile)).T)
         s5.setData(np.array((list(range(0, 250)), Breathenerge)).T)
         s6.setData(np.array((list(range(0, 250)), Heartenerge)).T)
-        labelItem1.setText(text='Breath Rate:' + str(vitalsign["breathingRateEst_FFT"]), size='12pt', color='000000')
-        labelItem2.setText(text='Heart Rate:' + str(vitalsign["heartRateEst_FFT"]), size='12pt', color='000000')
-        QtGui.QApplication.processEvents()
+        labelItem1.setText(text='Breath Rate:' + str(vitalsign["breathingRateEst_FFT"]), size='12pt', color='#000000')
+        labelItem2.setText(text='Heart Rate:' + str(vitalsign["heartRateEst_FFT"]), size='12pt', color='#000000')
+        QtWidgets.QApplication.processEvents()
 
     return dataOk
 
@@ -220,19 +225,23 @@ CLIport, Dataport = serialConfig(configFileName)
 configParameters = parseConfigFile(configFileName)
 
 # START QtAPPfor the plot
-app = QtGui.QApplication([])
+app = QtWidgets.QApplication([])
 
 # Set the plot
 pg.setConfigOption('background', 'w')
-win = pg.GraphicsWindow(title="Vital Sign")
-
+win = pg.GraphicsLayoutWidget(show=True, title="Vital Sign")
+#win = pg.GraphicsLayoutWidget(show=False, title="Vital Sign")
+#win=QtWidgets.QWidget()
 win.resize(1200, 700)
 p1 = win.addPlot(row=1, col=0)
-p1.setTitle("Breathing Waveform", color='008080',size='12pt')
+p1.setTitle("Breathing Waveform", color=(0, 128, 128),size='12pt')
 p1.setXRange(0, 250)
 p1.setYRange(-2, 2)
 p1.setLabel('left', text='Position (mm)')
 p1.setLabel('bottom', text='Time (pre 50ms)')
+ticks = list(("10s","20s","30s","40s"))
+ax = p1.getAxis("bottom")
+#ax.setTicks(ticks)
 PEN = pg.mkPen(width=2, color='r')
 s1 = p1.plot([], [], pen=PEN)
 
@@ -240,7 +249,7 @@ labelItem1 = pg.LabelItem(text='Breath Rate:')
 win.addItem(labelItem1, row=0, col=0)
 
 p2 = win.addPlot(row=1, col=1)
-p2.setTitle("Cardiac Waveform", color='008080',size='12pt')
+p2.setTitle("Cardiac Waveform", color='#008080',size='12pt')
 p2.setXRange(0, 250)
 p2.setYRange(-2, 2)
 p2.setLabel('left', text='Position (mm)')
@@ -252,7 +261,7 @@ labelItem2 = pg.LabelItem(text='Heartbeat Rate:')
 win.addItem(labelItem2, row=0, col=1)
 
 p3 = win.addPlot(row=2, col=0)
-p3.setTitle("Chest Displacement", color='008080',size='12pt')
+p3.setTitle("Chest Displacement", color='#008080',size='12pt')
 p3.setXRange(0, 250)
 # p3.setYRange(-100, 100)
 p3.setLabel('left', text='Displacement (a.u.)')
@@ -261,51 +270,54 @@ PEN = pg.mkPen(width=2, color='r')
 s3 = p3.plot([], [], pen=PEN)
 
 p4 = win.addPlot(row=2, col=1)
-p4.setTitle("Range Profile", color='008080',size='12pt')
+p4.setTitle("Range Profile", color='#008080',size='12pt')
 # p4.setXRange(0, numRangeBinProcessed*configParameters["rangeResolutionMeters"])
 # p4.setYRange(0, 20000)
 p4.setLabel('left', text='Magnitude (a.u.)')
 p4.setLabel('bottom', text='Range (m)')
+p4.setYRange(0, 100000, padding=0)
 PEN = pg.mkPen(width=2, color='r')
 s4 = p4.plot([], [], pen=PEN)
 
 p5 = win.addPlot(row=3, col=0)
-p5.setTitle("Breath Energe", color='008080',size='12pt')
+p5.setTitle("Breath Energy", color='#008080',size='12pt')
 p5.setXRange(0, 250)
 # p5.setYRange(0, 20000)
-p5.setLabel('left', text='Wave Energe (a.u.10^6)')
+p5.setLabel('left', text='Wave Energy (a.u.10^6)')
 p5.setLabel('bottom', text='Time (pre 50ms)')
 PEN = pg.mkPen(width=2, color='r')
 s5 = p5.plot([], [], pen=PEN)
 
 p6 = win.addPlot(row=3, col=1)
-p6.setTitle("Cardiac Energe", color='008080',size='12pt')
+p6.setTitle("Cardiac Energy", color='#008080',size='12pt')
 p6.setXRange(0, 250)
 # p5.setYRange(0, 20000)
-p6.setLabel('left', text='Wave Energe (a.u.)')
+p6.setLabel('left', text='Wave Energy (a.u.)')
 p6.setLabel('bottom', text='Time (pre 50ms)')
 PEN = pg.mkPen(width=2, color='r')
 s6 = p6.plot([], [], pen=PEN)
 
 labelItem3 = pg.LabelItem(text='Range Start:')
 win.addItem(labelItem3, row=5, col=0)
-labelItem3.setText(text='Range Start:' + str(configParameters["rangeStart"]) + " m", size='12pt', color='000000')
+labelItem3.setText(text='Range Start:' + str(configParameters["rangeStart"]) + " m", size='12pt', color='#000000')
 
 labelItem4 = pg.LabelItem(text='Range End:')
 win.addItem(labelItem4, row=5, col=1)
-labelItem4.setText(text='Range End:' + str(configParameters["rangeEnd"]) + " m", size='12pt', color='000000')
+labelItem4.setText(text='Range End:' + str(configParameters["rangeEnd"]) + " m", size='12pt', color='#000000')
 
 labelItem5 = pg.LabelItem(text='Max Range:')
 win.addItem(labelItem5, row=6, col=0)
-labelItem5.setText(text='Max Range:' + str(configParameters["maxRange"]) + " m", size='12pt', color='000000')
+labelItem5.setText(text='Max Range:' + str(round(configParameters["maxRange"],2)) + " m", size='12pt', color='#000000')
 
 labelItem6 = pg.LabelItem(text='Range Resolution Meters:')
 win.addItem(labelItem6, row=6, col=1)
-labelItem6.setText(text='Range Resolution Meters:' + str(configParameters["rangeResolutionMeters"]) + " m", size='12pt', color='000000')
+labelItem6.setText(text='Range Resolution:' + str(round(configParameters["rangeResolutionMeters"]*100,2)) + " cm", size='12pt', color='#000000')
 
 detObj = {}
 frameData = {}
 currentIndex = 0
+
+#pg.exec()
 while True:
     try:
         # Update the data and check if the data is okay
